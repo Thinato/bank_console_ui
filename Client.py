@@ -1,7 +1,7 @@
 import os
 import pickle
 import usersVars
-import time
+from time import sleep
 
 # Booleans
 # Se o cliente está dentro do painel de controle ou não
@@ -14,6 +14,7 @@ trySaque = False
 tryDeposit = False
 # Loop para a tela do cliente
 tryClient = True
+# Deve sempre estar como True, vai dar um update nos dados a cada loop
 updateData = True
 
 # Integers
@@ -22,11 +23,19 @@ failedAttempts = 0
 # Uma variavel feita para salvar o ID do cliente que entrou
 currentUser = 0
 
-'''if os.path.exists('users.data'): ## verificando se o arquivo existe
-    with open('users.data', 'rb') as f:
-        users = pickle.load(f)
-users[usersVars.userID] = usersVars.username, usersVars.password, usersVars.account, usersVars.balance, usersVars.name_full, usersVars.profession, usersVars.monthly_income, usersVars.address, usersVars.phone_number, usersVars.status ## definicao de um login (username, password e status)
-'''
+#--------------#
+def SetData():
+    usersVars.username = users[currentUser][0]
+    usersVars.password = users[currentUser][1]
+    usersVars.account = users[currentUser][2]
+    usersVars.balance = users[currentUser][3]
+    usersVars.name_full = users[currentUser][4]
+    usersVars.profession = users[currentUser][5]
+    usersVars.monthly_income = users[currentUser][6]
+    usersVars.address = users[currentUser][7]
+    usersVars.phone_number = users[currentUser][8]
+    usersVars.status = users[currentUser][9]
+#--------------#
 
 
 
@@ -58,6 +67,7 @@ while tryLogin:
             tryClient = True
             userCP = True
             currentUser = i
+            SetData()
             break;
     # Caso não seja possivel encontrar o usuario, isso aparecerá
     else:
@@ -78,7 +88,6 @@ while tryLogin:
 while tryClient:
     # 1- SAQUE
     while trySaque:
-        saldo = 0
         os.system('cls')
         if users[currentUser][3] > 0:
             print(f'Saldo atual: {users[currentUser][3]}')
@@ -88,8 +97,8 @@ while tryClient:
                 trySaque = False
                 userCP = True
             else:
-                #users[currentUser][3] -= saldo ## tupla != int
-                usersVars.balance -= saldo
+                #users[currentUser][3] -= saque ## tupla != int
+                usersVars.balance -= saque
             break;
         else:
             input('Erro!\nSeu saldo eh invalido para realizar saques.')
@@ -125,7 +134,7 @@ while tryClient:
         print("3. Verificar Saldo")
         print("4. Investir")
         print("5. Informacoes")
-        enter = input("\nEntrada: ")
+        enter = str(input("\nEntrada: "))
         if enter == '0':
             import main
         elif enter == '1' or enter == "saque":
@@ -139,11 +148,11 @@ while tryClient:
             print("Erro!\nEntrada Invalida.")
 
     while updateData:
-        users[currentUser] = users[currentUser][0], users[currentUser][1], users[currentUser][2], users[currentUser][3], users[currentUser][4], users[currentUser][5], users[currentUser][6], users[currentUser][7], users[currentUser][8], users[currentUser][9] ## definicao de um login (username, password e status)
-        if users[currentUser][3] != 
-        
+        # Faz um update nos dados
+        users[currentUser] = usersVars.username, usersVars.password, usersVars.account, usersVars.balance, usersVars.name_full, usersVars.profession, usersVars.monthly_income, usersVars.address, usersVars.phone_number, usersVars.status
         with open('users.data', 'wb') as f:
             # Pickle the 'data' dictionary using the highest protocol available.
             pickle.dump(users, f, pickle.HIGHEST_PROTOCOL)
+        break;
         
             
