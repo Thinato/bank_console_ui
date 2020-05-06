@@ -3,6 +3,7 @@ import random
 import os
 import usersVars
 import json
+import time
 
 
 ## Variaveis com dados iniciais.
@@ -17,6 +18,7 @@ inMenu = False
 tryGerente = True
 # Tentativas de login com falhas
 failedAttempts = 0 
+
 
 while tryGerente:
     if os.path.exists('users.data'): ## verificando se o arquivo existe
@@ -54,9 +56,10 @@ while tryGerente:
 
         for i in range(len(users)):
             if usersVars.username == users[i][0] and usersVars.password == users[i][1] and users[i][9] == True:
-                input(f"\nSucesso!")
+                print(f"\nSucesso!")
                 tryLogin = False
                 inMenu = True
+                time.sleep(.3)
                 break;
             else:
                 #users.close()
