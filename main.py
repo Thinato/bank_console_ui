@@ -9,36 +9,49 @@
 import os
 import random
 import sys
+from time import sleep
 
 # Variaveis com valores iniciais
-inMenu = True # Para que tenha um loop no menu
-choice = 0 # A opção que o usuario vai escolher dentro da entrada
+# Para que tenha um loop no menu
+inMenu = True 
+# A opção que o usuario vai escolher dentro da entrada
+choice = 0 
 
 
 while inMenu: # Inicio do menu
     os.system('cls') # Limpar a tela
-
+    # ╔╗═║
+    # ╠╣╦╬
+    # ╚╝╩╬
     # Textos para o usuario
-    print("Olá, o que gostaria de fazer no FadeBank?\nEntrar como:\n")
-    print("1. Cliente")
-    print("2. Gerente\n"+"Digite \"sair\" pa1ra sair.\n\n")
+    print("╔══════════════════════════════════════════╗\n"
+        + "║Olá, o que gostaria de fazer no FadeBank? ║\n"
+        + "║Entrar como:                              ║\n"
+        + "║                                          ║\n"
+        + "║   1. Cliente                             ║\n"
+        + "║   2. Gerente                             ║\n"
+        + "║                                          ║\n"
+        + "║        Digite \"sair\" pa1ra sair.         ║\n"
+        + "╠══════════════════════════════════════════╝\n"
+        + "║")
 
     # input da entrada do usuario, recebe um numero ou o nome da opção
-    choice = input("Entrada: ")
-    if choice == str("1") or choice.lower() == "cliente":
+    choice = input("╚═ Entrada: ")
+    if choice == "1" or choice.lower() == "cliente":
         # Encerra o loop do Menu
         inMenu = False
         # Vai para o cliente
         import Client
-    elif choice == str("2") or choice.lower() == "gerente":
+    elif choice == "2" or choice.lower() == "gerente":
         inMenu = False
         import admin
         # Opção somente feita por texto para a saida do usuario.
-    elif choice.lower() == "sair" or choice.lower() == "fechar":
-        sys.exit('Finalizando processo. . .')
+    elif choice.lower() == "sair" or choice.lower() == "fechar" or choice == "0":
+        sys.exit('Finalizando sessao. . .')
         # Em caso de qualquer input invalida, isso sera dado como output.
     else:
         ## Estamos usando o input para que o usuario tenha tempo de ler e reagir
-        input("Erro!\nEntrada invalida.") 
+        print("Erro!\nEntrada invalida.") 
+        sleep(.3)
         inMenu = True
 

@@ -8,10 +8,12 @@ from time import sleep
 userCP = False
 # Se o cliente está efetuando login ou não
 tryLogin = True
-# Se o cliente está sacando ou não
-trySaque = False
+# Se o cliente está Sacando ou não
+tryWithdraw = False
 # Se o cliente está Depositando ou não
 tryDeposit = False
+# Se o cliente esta Investindo ou não
+tryInvest = False
 # Loop para a tela do cliente
 tryClient = True
 # Deve sempre estar como True, vai dar um update nos dados a cada loop
@@ -22,6 +24,10 @@ updateData = True
 failedAttempts = 0 
 # Uma variavel feita para salvar o ID do cliente que entrou
 currentUser = 0
+
+# Integers
+# usado para dar mais segurança ao cliente.
+accountRemainder = str(usersVars.account)[:2]
 
 #--------------#
 def SetData():
@@ -51,7 +57,7 @@ while tryLogin:
     os.system('cls')
     # Entradas de Login/Senha do cliente
     print("Por favor realize o seu login para que possamos continuar...\n")
-    usersVars.username = str(input("Usuario: "))
+    usersVars.account = int(input("Conta: "))
     usersVars.password = str(input("Senha: "))
 
     # Passando por todo o banco de dados a procura de um usuario que se encaixe
@@ -60,9 +66,9 @@ while tryLogin:
         os.system('cls')
         print('Por favor, aguarde. . .') 
         #--------------------------------#
-        if usersVars.username == users[i][0] and usersVars.password == users[i][1] and users[i][9] == False:
+        if usersVars.account == users[i][2] and usersVars.password == users[i][1] and users[i][9] == False:
             print(f"\nSucesso!")
-            time.sleep(.3)
+            sleep(.3)
             tryLogin = False
             tryClient = True
             userCP = True
@@ -86,73 +92,150 @@ while tryLogin:
 
 
 while tryClient:
-    # 1- SAQUE
-    while trySaque:
-        os.system('cls')
-        if users[currentUser][3] > 0:
-            print(f'Saldo atual: {users[currentUser][3]}')
-            saque = int(input('\n\nQuanto deseja sacar? (Digite 0 para sair)\n'))
-            # Como isso é apenas uma simulação o saldo apenas é deletado
-            if (saque <= 0):
-                trySaque = False
-                userCP = True
-            else:
-                #users[currentUser][3] -= saque ## tupla != int
-                usersVars.balance -= saque
-            break;
-        else:
-            input('Erro!\nSeu saldo eh invalido para realizar saques.')
-    
-    while tryDeposit:
-        deposit = 0
-        os.system('cls')
-    
-        # Não foi declarado nenhum limite para a execução do saque
-        print(f'Saldo atual: {users[currentUser][3]}')
-        depoist = input('\n\nQuanto deseja depositar? (Digite 0 para sair)\n')
-        if (deposit <= 0):
-            tryDeposit = False
-            userCP = True
-        else:
-            users[currentUser][3] += deposit
-    
-    
-    
-    
-    
-    
-    ## USER CONTROL PANEL
-    while userCP:
-        enter = -1
-        os.system('cls')
-        print(f"Bem vindo {users[currentUser][4]}!\nO que deseja fazer?\n")
-
-        # Deixei com varios prints, fica mais facil a visualização nesse caso
-        print("0. Sair")
-        print("1. Saque")
-        print("2. Deposito")
-        print("3. Verificar Saldo")
-        print("4. Investir")
-        print("5. Informacoes")
-        enter = str(input("\nEntrada: "))
-        if enter == '0':
-            import main
-        elif enter == '1' or enter == "saque":
-            trySaque = True
-            userCP = False
-        #elif enter == 2 or enter == "deposito":
-        #elif enter == 3 or enter == "verificar saldo":
-        #elif enter == 4 or enter == "investir":
-        #elif enter == 5 or enter == "info" or enter == "informacoes":
-        else:
-            print("Erro!\nEntrada Invalida.")
-
-    while updateData:
+    accountRemainder = str(usersVars.account)[:2]
+    def UpdateData():
         # Faz um update nos dados
         users[currentUser] = usersVars.username, usersVars.password, usersVars.account, usersVars.balance, usersVars.name_full, usersVars.profession, usersVars.monthly_income, usersVars.address, usersVars.phone_number, usersVars.status
         with open('users.data', 'wb') as f:
             # Pickle the 'data' dictionary using the highest protocol available.
             pickle.dump(users, f, pickle.HIGHEST_PROTOCOL)
+    # 1- SAQUE
+    while tryWithdraw:
+        os.system('cls')
+
+        if users[currentUser][3] > 0:
+            withdraw = 0
+            print('╔══════════════════════════════════\n'
+                + '║\n'
+                +f'╠═Conta: {accountRemainder}XXX\n'
+                +f'╠═Saldo atual: {users[currentUser][3]}\n'
+                + '║\n'
+                + '║')
+            withdraw = int(input('╠═Quanto deseja sacar? (Digite 0 para sair)\n╚ R$'))
+            # Como isso é apenas uma simulação o saldo apenas é deletado
+            if (withdraw <= 0):
+                tryWithdraw = False
+                userCP = True
+            elif (withdraw > users[currentUser][3]):
+                input('Erro!\nSaldo insuficiente.')
+            else:
+                usersVars.balance -= withdraw
+                usersVars.balance = round(usersVars.balance, 2)
+                UpdateData()
+            break;
+        else:
+            input('Erro!\nSeu saldo eh invalido para realizar saques.')
+    
+    # 2- DEPOSITO
+    while tryDeposit:
+        os.system('cls')
+        deposit = 0
+        print('╔══════════════════════════════════\n'
+            + '║\n'
+            +f'╠═Conta: {accountRemainder}XXX\n'
+            +f'╠═Saldo atual: {users[currentUser][3]}\n'
+            + '║\n'
+            + '║')
+        deposit = int(input('╠═Quanto deseja depositar? (Digite 0 para sair)\n╚ R$'))
+        if (deposit <= 0):
+            tryDeposit = False
+            userCP = True
+        elif (deposit > 10000): #Limite para deposito
+            input(f"\nErro!\nO valor {deposit}\neh muito alto para realizar depositos.")
+            UpdateData()
+            break;
+        else:
+            usersVars.balance += deposit
+            usersVars.balance = round(usersVars.balance, 2)
+            UpdateData()
         break;
+    
+
+    def Investment(initialInvest, percent, elapsedTime):
+        return initialInvest * (1+(percent/100))**elapsedTime
+
+    # 3 - Investir
+    while tryInvest:
+        os.system('cls')
+        print('╔══════════════════════════════════\n'
+            + '║\n'
+            +f'╠═Conta: {accountRemainder}XXX\n'
+            +f'╠═Saldo atual: {users[currentUser][3]}\n'
+            + '║\n'
+            + '║')
+        clientInvest = float(input('╠═Aporte inicial: R$'))
+        clientTime = int(input('╠═Tempo de investimento (Em meses): '))
+
+        if clientInvest > users[currentUser][3]:
+            print('ERRO!\n Aporte inicial invalido.')
+            tryInvest = False
+            UserCP = True
         
+
+        if clientTime < 12:
+            result = Investment(clientInvest, 0.5, clientTime) - clientInvest
+        elif clientTime > 60:
+            result = Investment(clientInvest, 1.0, clientTime) - clientInvest
+        else:
+            result = Investment(clientInvest, 0.7, clientTime) - clientInvest
+        result = round(result, 2)
+        
+        print('║\n╚Seu lucro foi de: R$', result)
+        usersVars.balance += result
+        input()
+        tryInvest = False
+        userCP = True
+        UpdateData()
+        break
+
             
+
+    
+    ## USER CONTROL PANEL
+    while userCP:
+        UpdateData();
+        enter = -1
+        os.system('cls')
+        print('╔════════════════════════════════════════\n'
+            +f'╠═Bem vindo(a) de volta {users[currentUser][4]}!\n'
+            + '╠═O que deseja fazer?\n'
+            + '║\n'
+            + '╠═  0. Sair\n'
+            + '╠═  1. Saque\n'
+            + '╠═  2. Deposito\n'
+            + '╠═  3. Investir\n'
+            + '╠═  4. Informacoes\n'
+            + '╠════════════════════════════════════════')
+        enter = str(input('║\n╚═ Entrada: '))
+        if enter == '0':
+            import main
+        elif enter == '1' or enter == "saque":
+            tryWithdraw = True
+            userCP = False
+        elif enter == '2' or enter == "deposito":
+            tryDeposit = True
+            userCP = False
+        elif enter == '3' or enter == "investir":
+            tryInvest = True
+            userCP = False
+        elif enter == '4' or enter == "info" or enter == "informacoes":
+            os.system('cls')
+            print('╔════════════════════════════\n'
+                +f'╠═  INFORMACOES\n'
+                +f'╠════════════════════════════\n'
+                +f'╠═ Conta         : {users[currentUser][2]}\n'
+                +f'╠═ Saldo         : {users[currentUser][3]}\n'
+                +f'╠═ Profissao     : {users[currentUser][5]}\n'
+                +f'╠═ Renda Mensal  : {users[currentUser][6]}\n'
+                +f'╠═ Endereco      : {users[currentUser][7]}\n'
+                +f'╠═ Numero de Tel.: {users[currentUser][8]}\n'
+                +f'╠═ Cadastro      : Cliente\n'
+                + '╠════════════════════════════\n'
+                + '╠═ Precione \'ENTER\' para continuar. . .\n'
+                + '╚════════════════════════════')
+            input()
+        else:
+            print("Erro!\nEntrada Invalida.")
+
+    
+        

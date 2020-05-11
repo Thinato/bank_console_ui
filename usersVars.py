@@ -1,7 +1,8 @@
 userID = 0                  ## Ex.: 1 (int)
+
 username = ''               ## Ex.: paulo (str)
 password = ''               ## Ex.: 5594226 (str)
-account = ''                ## Ex.: 123456-7 (str)
+account = 0                 ## Ex.: 12345 (int)
 balance = 0.0               ## Ex.: 8523.23 (float)
 name_full = ''              ## Ex.: Paulo Ricardo Novaes Lisecki (str)
 profession = ''             ## Ex.: Cientista da Computacao (str)

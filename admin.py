@@ -46,6 +46,7 @@ ex_database = {0:('test', '123', 10000, 0.0, 'Gerente', '', 0.0, '', '+55 (55) 5
                23:('person', '123', 23641, 275.53, 'Rodrigo Gomes Melo', 'Atriz', 2738.0, 'Passagem Rodolfo Moser, 1372', '+55 (19) 99962-4172', False),
                24:('person', '123', 18774, 275.53, 'Murilo Barros Correia', 'Advogado', 3041.0, 'Rua Celeste, 1758', '+55 (19) 99772-3547', False),
                25:('person', '123', 37106, 275.53, 'Kaue Azevedo Cardoso', 'Arqueologo', 5634.0, 'Rua Teodorico do Monte Wanderley, 421', '+55 (19) 99817-0917', False),
+               26:('person', '123', 12429, 275.53, 'Paulo Ricardo N Lisecki', 'Maroteiro', 5634.0, 'Joao Bettega, 4301', '+55 (41) 98815-6088', False)
             }
 
 
@@ -154,10 +155,36 @@ while tryGerente:
             inMenu = True
 
 
-    #while tryChangePassword:
-        
-
-
+    while tryChangePassword:
+        currentUser = 0
+        usersVars.account = int(input('Numero da Conta: '))
+        for i in range(len(users)):
+            # Caso tenha muitos usuarios no users.data isso deve ajudar a indicar o que está havendo
+            os.system('cls')
+            print('Por favor, aguarde. . .') 
+            #--------------------------------#
+            if usersVars.account == users[i][2] and users[i][9] == False:
+                print(f"\nSucesso!")
+                usersVars.username = users[i][0]
+                usersVars.password = users[i][1]
+                usersVars.account = users[i][2]
+                usersVars.balance = users[i][3]
+                usersVars.name_full = users[i][4]
+                usersVars.profession = users[i][5]
+                usersVars.monthly_income = users[i][6]
+                usersVars.address = users[i][7]
+                usersVars.phone_number = users[i][8]
+                usersVars.status = users[i][9]
+                sleep(.3)
+                break;
+        usersVars.password = input('Insira nova senha: ')
+        # Faz um update nos dados
+        users[i] = usersVars.username, usersVars.password, usersVars.account, usersVars.balance, usersVars.name_full, usersVars.profession, usersVars.monthly_income, usersVars.address, usersVars.phone_number, usersVars.status
+        with open('users.data', 'wb') as f:
+            # Pickle the 'data' dictionary using the highest protocol available.
+            pickle.dump(users, f, pickle.HIGHEST_PROTOCOL)
+        tryChangePassword = False
+        inMenu = True
 
 
     while inMenu:
@@ -165,9 +192,10 @@ while tryGerente:
         print("╔════════════════════════════════╗\n"
              +"║ O que deseja fazer?            ║\n"
              +"║                                ║\n"
-             +"║\t1. Cadastrar nova conta  ║\n"
-             +"║\t2. Buscar conta corrente ║\n"
-             +"║\t3. Re-definir senha      ║\n"
+             +"╠═ 0. Sair                       ║\n"
+             +"╠═ 1. Cadastrar nova conta       ║\n"
+             +"╠═ 2. Buscar conta corrente      ║\n"
+             +"╠═ 3. Re-definir senha           ║\n"
              +"╠════════════════════════════════╝\n"
              +"║")
         enter = input('╚══Entrada: ')
@@ -185,6 +213,9 @@ while tryGerente:
             input('\nPressione \'ENTER\' para continuar. . .')
         elif (enter == '3'):
             tryChangePassword = True
+            inMenu = False
+        elif (enter == '0'):
+            import main
         else:
             inMenu = True
 
